@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Expert : Le DNS</title>
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-accent: #1e1b4b;
+            --primary: #6366f1; /* Indigo */
+            --secondary: #a855f7; /* Purple */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-hover: rgba(255, 255, 255, 0.06);
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
+        h1 { font-size: 3rem; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; color: transparent; margin-bottom: 1rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--text-main); border-left: 4px solid var(--primary); padding-left: 1rem; }
+        p { margin-bottom: 1.5rem; color: var(--text-muted); font-size: 1.1rem; }
+        
+        /* --- LAYOUT --- */
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 0; border-bottom: 1px solid var(--glass-border); opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border); padding: 15px 0;
+        }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: bold; font-size: 1.2rem; color: var(--text-main); }
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 20px; transition: color 0.3s; font-size: 0.95rem; }
+        .nav-links a:hover { color: var(--primary); }
+
+        /* --- HERO SECTION --- */
+        .hero { min-height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; padding-top: 80px; }
+        .hero-btn {
+            display: inline-block; padding: 15px 35px; background: var(--primary); color: white;
+            text-decoration: none; border-radius: 30px; font-weight: bold; margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hero-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -10px var(--primary); }
+
+        /* --- MEDIA PLACEHOLDERS --- */
+        .media-placeholder {
+            width: 100%; height: 350px; background: var(--glass); border: 2px dashed var(--glass-border);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-direction: column;
+            margin-bottom: 2rem; position: relative; overflow: hidden; transition: border-color 0.3s;
+        }
+        .media-placeholder:hover { border-color: var(--primary); }
+        .media-icon { font-size: 3rem; opacity: 0.5; margin-bottom: 10px; }
+        .media-tag { position: absolute; top: 10px; right: 10px; background: var(--primary); padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+
+        /* --- INTERACTIVE CARDS (RECORDS) --- */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card {
+            background: var(--glass); border: 1px solid var(--glass-border); padding: 25px; border-radius: 12px;
+            transition: all 0.3s; cursor: pointer; position: relative;
+        }
+        .card:hover { transform: translateY(-5px); background: var(--card-hover); border-color: var(--primary); }
+        .card h3 { color: var(--secondary); margin-bottom: 10px; }
+        .card-detail { display: none; margin-top: 15px; font-size: 0.9rem; color: var(--text-main); border-top: 1px solid var(--glass-border); padding-top: 10px; }
+
+        /* --- PROCESS SIMULATION --- */
+        .simulation-box {
+            background: #000; border-radius: 12px; padding: 20px; font-family: 'Consolas', monospace;
+            border: 1px solid var(--glass-border); min-height: 200px; position: relative; margin-top: 20px;
+        }
+        .sim-step { margin-bottom: 10px; opacity: 0; transform: translateX(-20px); transition: all 0.5s; color: #4ade80; }
+        .sim-step.active { opacity: 1; transform: translateX(0); }
+        .sim-btn {
+            background: var(--glass-border); color: white; border: 1px solid var(--text-muted);
+            padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: 0.3s;
+        }
+        .sim-btn:hover { background: var(--primary); border-color: var(--primary); }
+
+        /* --- QUIZ STYLES (INTEGRATED) --- */
+        .quiz-container {
+            background: var(--glass); backdrop-filter: blur(10px); border-radius: 20px;
+            padding: 40px; border: 1px solid var(--glass-border); margin-top: 20px;
+        }
+        .option {
+            background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;
+            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        }
+        .option:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); }
+        .option.correct { background: rgba(34, 197, 94, 0.2); border-color: var(--success); color: var(--success); }
+        .option.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--error); color: var(--error); }
+        .feedback { display: none; margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-left: 3px solid var(--primary); }
+        .btn-quiz { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; float: right; margin-top: 10px; }
+
+        /* --- FOOTER --- */
+        footer { text-align: center; padding: 50px 0; border-top: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.9rem; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">Dylan.ITFormateur</div>
+            <div class="nav-links">
+                <a href="#intro">Intro</a>
+                <a href="#hierarchie">Hiérarchie</a>
+                <a href="#records">Enregistrements</a>
+                <a href="#quiz">Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero visible">
+        <div class="container">
+            <span style="color: var(--secondary); text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;">Systèmes et Réseaux</span>
+            <h1>Le DNS : L'annuaire d'Internet</h1>
+            <p style="max-width: 600px; margin: 0 auto 30px auto;">Comprendre comment les noms de domaine sont traduits en adresses IP. Un module essentiel pour tout technicien TSSR / Administrateur.</p>
+            <a href="#intro" class="hero-btn">Commencer le cours</a>
+        </div>
+    </section>
+
+    <section id="intro">
+        <div class="container">
+            <h2>1. Introduction au concept</h2>
+            
+            <div class="media-placeholder">
+                <div class="media-tag">Vidéo / Audio</div>
+                <div class="media-icon">▶️</div>
+                <p>Intégration de l'Audio Overview (NotebookLM)</p>
+                <p style="font-size: 0.9rem; opacity: 0.7;">"Dialogue entre Expert et Junior sur l'analogie du GPS"</p>
+            </div>
+
+            <p>Imaginez devoir retenir les coordonnées GPS exactes (Latitude: 48.8566, Longitude: 2.3522) pour aller chez chaque ami. Impossible, n'est-ce pas ? Vous utilisez leurs adresses postales.</p>
+            <p>En informatique, c'est pareil : les ordinateurs communiquent via des <strong>Adresses IP</strong> (le GPS), mais les humains préfèrent des <strong>Noms de Domaine</strong> (l'adresse postale).</p>
+        </div>
+    </section>
+
+    <section id="hierarchie">
+        <div class="container">
+            <h2>2. L'Arborescence DNS</h2>
+            <p>Le DNS est une base de données distribuée et hiérarchique. Il n'y a pas un seul serveur qui connaît tout Internet.</p>
+            
+            <div class="media-placeholder" style="height: 300px;">
+                <div class="media-tag">Schéma interactif</div>
+                <div style="text-align: center;">
+                    <div style="border: 1px solid var(--text-muted); padding: 10px; display: inline-block; border-radius: 50%; width: 50px; height: 50px; line-height: 30px;">.</div>
+                    <div style="font-size: 0.8rem; margin-bottom: 10px;">Racine (Root)</div>
+                    <div style="font-size: 1.5rem;">⬇</div>
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <span style="border: 1px solid var(--primary); padding: 5px 15px; border-radius: 8px;">.com</span>
+                        <span style="border: 1px solid var(--primary); padding: 5px 15px; border-radius: 8px;">.fr</span>
+                        <span style="border: 1px solid var(--primary); padding: 5px 15px; border-radius: 8px;">.org</span>
+                    </div>
+                    <div style="font-size: 0.8rem; margin-top: 5px;">TLD (Top Level Domain)</div>
+                </div>
+            </div>
+            
+            <ul>
+                <li><strong>Racine (.) :</strong> Le point de départ géré par 13 clusters de serveurs mondiaux.</li>
+                <li><strong>TLD :</strong> Les extensions (.fr, .com).</li>
+                <li><strong>Domaine :</strong> google, amazon, dylancours.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="processus">
+        <div class="container">
+            <h2>3. Le Processus de Résolution</h2>
+            <p>Que se passe-t-il vraiment quand vous tapez <code>www.google.fr</code> ?</p>
+            
+            <button class="sim-btn" onclick="startSimulation()">Lancer la simulation de requête</button>
+            
+            <div class="simulation-box" id="sim-console">
+                <div style="color: #666;">// Console de débogage DNS...</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="records">
+        <div class="container">
+            <h2>4. Les Enregistrements (Records)</h2>
+            <p>Survolez les cartes pour voir la définition.</p>
+            
+            <div class="grid-cards">
+                <div class="card" onmouseenter="showDetail(this)" onmouseleave="hideDetail(this)">
+                    <h3>Type A</h3>
+                    <p>Standard IPv4</p>
+                    <div class="card-detail">Associe un nom de domaine à une adresse IPv4 (ex: 192.168.1.1).</div>
+                </div>
+                <div class="card" onmouseenter="showDetail(this)" onmouseleave="hideDetail(this)">
+                    <h3>Type AAAA</h3>
+                    <p>Standard IPv6</p>
+                    <div class="card-detail">Associe un nom de domaine à une adresse IPv6.</div>
+                </div>
+                <div class="card" onmouseenter="showDetail(this)" onmouseleave="hideDetail(this)">
+                    <h3>CNAME</h3>
+                    <p>Alias</p>
+                    <div class="card-detail">Permet de créer un alias d'un nom vers un autre (ex: www vers domaine.com).</div>
+                </div>
+                <div class="card" onmouseenter="showDetail(this)" onmouseleave="hideDetail(this)">
+                    <h3>MX</h3>
+                    <p>Mail Exchange</p>
+                    <div class="card-detail">Indique les serveurs de messagerie pour le domaine. Indispensable pour recevoir des emails.</div>
+                </div>
+                <div class="card" onmouseenter="showDetail(this)" onmouseleave="hideDetail(this)">
+                    <h3>PTR</h3>
+                    <p>Pointeur</p>
+                    <div class="card-detail">Utilisé pour la résolution inverse (Trouver le nom à partir de l'IP).</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz">
+        <div class="container">
+            <h2>Validez vos connaissances</h2>
+            <div class="quiz-container">
+                <div id="quiz-ui">
+                    <p style="margin-bottom: 20px; font-weight: bold; color: var(--secondary);" id="question-tracker">Question 1</p>
+                    <h3 id="question-text" style="margin-bottom: 20px; font-size: 1.3rem;">Chargement...</h3>
+                    <div id="options-area"></div>
+                    
+                    <div id="feedback-area" class="feedback">
+                        <strong id="feedback-title">Explication :</strong>
+                        <p id="feedback-msg"></p>
+                        <button class="btn-quiz" onclick="nextQuestion()">Suivant</button>
+                    </div>
+                </div>
+                <div id="quiz-result" style="display: none; text-align: center;">
+                    <h3 style="font-size: 2rem; color: var(--primary);">Résultat Final</h3>
+                    <p id="final-score" style="font-size: 4rem; font-weight: bold; margin: 20px 0;">0/5</p>
+                    <p id="final-msg">Bravo !</p>
+                    <button class="btn-quiz" style="float: none;" onclick="location.reload()">Recommencer</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Dylan OSEI ASSIBEY - Formateur Informatique</p>
+            <p style="font-size: 0.8rem; opacity: 0.5;">Conçu avec l'assistance d'IA pour l'excellence pédagogique</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- SCROLL ANIMATION ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- INTERACTIVE CARDS ---
+        function showDetail(card) {
+            card.querySelector('.card-detail').style.display = 'block';
+        }
+        function hideDetail(card) {
+            card.querySelector('.card-detail').style.display = 'none';
+        }
+
+        // --- SIMULATION LOGIC ---
+        function startSimulation() {
+            const consoleBox = document.getElementById('sim-console');
+            consoleBox.innerHTML = '<div style="color: #666;">// Démarrage de la résolution...</div>';
+            
+            const steps = [
+                { txt: "1. Client : Je cherche l'IP de www.google.fr ?", time: 500 },
+                { txt: "2. Serveur DNS Local : Je ne sais pas. Je demande à la Racine (.)", time: 1500 },
+                { txt: "3. Racine : Vois avec le serveur TLD (.fr)", time: 2500 },
+                { txt: "4. Serveur TLD (.fr) : Vois avec le serveur de Google (ns1.google.com)", time: 3500 },
+                { txt: "5. Serveur Google : Voici l'IP -> 142.250.179.67", time: 4500 },
+                { txt: "6. Client : Merci ! Connexion en cours...", time: 5500, color: "var(--success)" }
+            ];
+
+            steps.forEach(step => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'sim-step active';
+                    div.innerText = step.txt;
+                    if(step.color) div.style.color = step.color;
+                    consoleBox.appendChild(div);
+                }, step.time);
+            });
+        }
+
+        // --- QUIZ LOGIC ---
+        const questions = [
+            { q: "Que signifie DNS ?", opts: ["Domain Name System", "Data Network Service", "Digital Name Server"], a: 0, exp: "Domain Name System traduit les noms en IP." },
+            { q: "Quel port utilise le DNS ?", opts: ["80 TCP", "53 UDP", "443 TCP"], a: 1, exp: "Le port 53 UDP est le standard pour la rapidité." },
+            { q: "Quel enregistrement pointe vers une IPv4 ?", opts: ["AAAA", "CNAME", "A"], a: 2, exp: "L'enregistrement A est pour l'IPv4, AAAA pour l'IPv6." },
+            { q: "Qu'est-ce que le TTL ?", opts: ["Time To Live", "Total Time Load", "Time To Link"], a: 0, exp: "Le Time To Live définit la durée de mise en cache de l'info." },
+            { q: "Quel est le rôle du serveur Root ?", opts: ["Héberger Google", "Gérer la racine de tout Internet", "Filtrer les virus"], a: 1, exp: "Les serveurs racines sont au sommet de la hiérarchie mondiale." }
+        ];
+
+        let qIndex = 0;
+        let score = 0;
+
+        function loadQuiz() {
+            const q = questions[qIndex];
+            document.getElementById('question-tracker').innerText = `Question ${qIndex + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('feedback-area').style.display = 'none';
+            
+            const optsArea = document.getElementById('options-area');
+            optsArea.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerText = opt;
+                div.onclick = () => check(idx, div);
+                optsArea.appendChild(div);
+            });
+        }
+
+        function check(selectedIdx, element) {
+            const q = questions[qIndex];
+            const allOpts = document.querySelectorAll('.option');
+            allOpts.forEach(o => o.style.pointerEvents = 'none'); // Disable clicks
+
+            if (selectedIdx === q.a) {
+                element.classList.add('correct');
+                score++;
+            } else {
+                element.classList.add('wrong');
+                allOpts[q.a].classList.add('correct');
+            }
+
+            document.getElementById('feedback-msg').innerText = q.exp;
+            document.getElementById('feedback-area').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            qIndex++;
+            if (qIndex < questions.length) {
+                loadQuiz();
+            } else {
+                document.getElementById('quiz-ui').style.display = 'none';
+                document.getElementById('quiz-result').style.display = 'block';
+                document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+                if(score === questions.length) document.getElementById('final-msg').innerText = "Expert DNS confirmé !";
+                else document.getElementById('final-msg').innerText = "Bon travail, relisez les sections pour atteindre 100%.";
+            }
+        }
+
+        // Init Quiz
+        loadQuiz();
+
+    </script>
+</body>
+</html>
