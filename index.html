@@ -7,10 +7,10 @@
     <style>
         /* --- CHARTE GRAPHIQUE OFFICIELLE --- */
         :root {
-            --blue-azure: #0F70B7;      /* Accents, titres secondaires */
-            --blue-ultramarine: #312783; /* Textes principaux, fonds sombres */
-            --purple: #811F82;          /* Nuances, citations */
-            --pink-fuchsia: #E6007E;    /* Boutons, appels à l'action importants */
+            --blue-azure: #0F70B7;
+            --blue-ultramarine: #312783;
+            --purple: #811F82;
+            --pink-fuchsia: #E6007E;
             --white: #ffffff;
             --light-bg: #f4f6f9;
         }
@@ -52,6 +52,12 @@
             transition: color 0.3s;
         }
 
+        /* Pour mobile, on cache les liens si nécessaire ou on adapte, 
+           ici on garde simple pour l'exemple */
+        @media (max-width: 600px) {
+            .nav-links { display: none; }
+        }
+
         .nav-links a:hover {
             color: var(--pink-fuchsia);
         }
@@ -65,6 +71,7 @@
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(230, 0, 126, 0.3);
             transition: transform 0.2s, background-color 0.3s;
+            display: inline-block; /* Assure que le padding s'applique bien */
         }
 
         .btn-primary:hover {
@@ -72,7 +79,7 @@
             transform: translateY(-2px);
         }
 
-        /* --- HERO SECTION (L'Avatar D.Code) --- */
+        /* --- HERO SECTION --- */
         header.hero {
             display: flex;
             align-items: center;
@@ -98,7 +105,7 @@
         }
 
         .hero-content h1 {
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3rem); /* Taille responsive */
             color: var(--blue-ultramarine);
             margin: 0.5rem 0;
             line-height: 1.2;
@@ -109,7 +116,7 @@
         }
 
         .mission-quote {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--purple);
             font-style: italic;
             border-left: 5px solid var(--blue-azure);
@@ -122,11 +129,13 @@
 
         .hero-image {
             max-width: 400px;
+            width: 100%;
             position: relative;
         }
 
         .hero-image img {
             width: 100%;
+            height: auto;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(15, 112, 183, 0.3);
             border: 4px solid var(--white);
@@ -135,17 +144,18 @@
 
         .avatar-label {
             position: absolute;
-            bottom: -20px;
-            right: -20px;
+            bottom: -15px;
+            right: -10px;
             background-color: var(--blue-ultramarine);
             color: var(--white);
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 10px;
             font-weight: bold;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
         }
 
-        /* --- SECTION DUO: L'Expert & L'Avatar --- */
+        /* --- SECTION DUO --- */
         section.duo-container {
             display: flex;
             flex-wrap: wrap;
@@ -156,31 +166,34 @@
 
         .profile-card {
             flex: 1;
-            min-width: 300px;
+            min-width: 300px; /* Evite que ça devienne trop petit */
         }
 
         .profile-card h2 {
             color: var(--blue-azure);
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
         .role-badge {
-            font-size: 1rem;
+            font-size: 0.9rem;
             background-color: var(--purple);
             color: white;
-            padding: 2px 10px;
+            padding: 4px 12px;
             border-radius: 4px;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .bio-text {
-            font-size: 1.05rem;
+            font-size: 1rem;
             color: #444;
             text-align: justify;
+            margin-bottom: 1rem;
         }
 
         .skill-list {
@@ -198,7 +211,7 @@
             padding: 5px 10px;
             border-radius: 5px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* --- FOOTER --- */
@@ -206,36 +219,27 @@
             background-color: var(--light-bg);
             border-top: 5px solid var(--blue-ultramarine);
             padding: 2rem 5%;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .footer-copyright {
-            grid-column: 2;
-            text-align: center;
             font-weight: bold;
             color: var(--blue-ultramarine);
             font-size: 0.9rem;
-        }
-
-        .footer-logo {
-            grid-column: 3;
-            text-align: right;
-            display: flex;
-            justify-content: flex-end;
+            text-align: center;
+            flex-grow: 1;
         }
 
         .footer-logo img {
-            height: 60px;
-            transition: transform 0.3s;
-        }
-        
-        .footer-logo img:hover {
-             transform: scale(1.1);
+            height: 50px;
+            width: auto;
         }
 
-        /* Responsive */
+        /* Responsive Global */
         @media (max-width: 900px) {
             header.hero {
                 flex-direction: column-reverse;
@@ -243,10 +247,18 @@
                 padding: 2rem 5%;
             }
             .hero-content { max-width: 100%; }
-            .hero-image { margin-bottom: 2rem; max-width: 80%; }
-            .mission-quote { border-left: none; border-top: 5px solid var(--blue-azure); }
-            footer { display: flex; flex-direction: column-reverse; gap: 1rem; text-align: center; }
-            .footer-logo { justify-content: center; }
+            .hero-image { margin-bottom: 2rem; max-width: 80%; margin-left: auto; margin-right: auto; }
+            .mission-quote { border-left: none; border-top: 5px solid var(--blue-azure); text-align: center; }
+            
+            section.duo-container {
+                padding: 2rem 5%;
+                gap: 2rem;
+            }
+            
+            footer {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -257,7 +269,7 @@
             <span>DYDY IT SERVICES</span>
         </div>
         <div class="nav-links">
-            <a href="#">Parcours de formation</a>
+            <a href="#">Parcours</a>
             <a href="#">Ressources</a>
             <a href="#" class="btn-primary">Espace Membre</a>
         </div>
@@ -269,14 +281,14 @@
             <h1>Décodez les <span class="highlight">Systèmes & Réseaux</span> sans prise de tête.</h1>
             
             <p class="mission-quote">
-                "Je veux rendre l'apprentissage de l'informatique simple et intuitif pour être un.e technicien.ne / administrateur.e systèmes et réseaux compétent."
+                "Je veux rendre l'apprentissage de l'informatique simple et intuitif pour être un.e technicien.ne / administrateur.e compétent."
             </p>
 
-            <a href="#" class="btn-primary">Lancer ma première session avec D.Code</a>
+            <a href="#" class="btn-primary">Lancer ma session avec D.Code</a>
         </div>
 
         <div class="hero-image">
-            <img src="Zylan.jpg" alt="D.Code, votre guide virtuel">
+            <img src="zylan.jpg" alt="D.Code, votre guide virtuel">
             <div class="avatar-label">Moi, c'est D.Code !</div>
         </div>
     </header>
@@ -290,14 +302,13 @@
                 <strong>Administrateur Réseau</strong> et titulaire d'une Licence Pro en Réseaux & Sécurité, j'ai forgé mon expérience au cœur d'infrastructures critiques (RATP, Rectorat de Créteil).
             </p>
             <p class="bio-text">
-                Depuis 2021, j'accompagne les futurs techniciens via <strong>Dydy IT Services</strong>. Mon métier ? Concevoir des scénarios pédagogiques concrets et vous préparer aux réalités de l'entreprise (Active Directory, Virtualisation, Cisco), loin de la théorie poussiéreuse.
+                J'accompagne les futurs techniciens pour vous préparer aux réalités de l'entreprise (Active Directory, Virtualisation, Cisco), loin de la théorie poussiéreuse.
             </p>
             <ul class="skill-list">
                 <li class="skill-item">Windows Server</li>
                 <li class="skill-item">Linux Debian</li>
                 <li class="skill-item">Cisco CCNA</li>
                 <li class="skill-item">Virtualisation</li>
-                <li class="skill-item">Cybersécurité</li>
             </ul>
         </div>
 
@@ -307,24 +318,22 @@
                 Je suis <strong>D.Code</strong>, le double virtuel de Dylan. Je suis né d'une volonté simple : <em>décoder les mystères</em> de l'informatique.
             </p>
             <p class="bio-text">
-                L'infrastructure réseau peut sembler être une langue étrangère complexe. Ma mission est de traduire ce jargon technique en concepts <strong>simples, ludiques et intuitifs</strong>. Je serai votre compagnon de route dans toutes les vidéos et supports de cours pour s'assurer que chaque notion est parfaitement assimilée.
+                Ma mission est de traduire le jargon technique en concepts <strong>simples, ludiques et intuitifs</strong>. Je serai votre compagnon de route dans toutes les vidéos.
             </p>
             <div style="margin-top: 20px; text-align: center;">
-                <span style="color: var(--blue-azure); font-weight: bold; font-size: 1.2rem;">"Complexité = 0, Compétence = 100%"</span>
+                <span style="color: var(--blue-azure); font-weight: bold;">"Complexité = 0, Compétence = 100%"</span>
             </div>
         </div>
 
     </section>
 
     <footer>
-        <div></div>
-        
-        <div class="footer-copyright">
+        <div style="flex:1"></div> <div class="footer-copyright">
             © 2026 DydyITServices - Formation Informatique
         </div>
 
-        <div class="footer-logo">
-            <img src="logo dylan copie.PNG" alt="Logo DydyITServices">
+        <div class="footer-logo" style="flex:1; text-align:right;">
+            <img src="logo.png" alt="Logo DydyITServices">
         </div>
     </footer>
 
