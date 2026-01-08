@@ -28,20 +28,28 @@
         nav {
             background-color: var(--white);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 5%;
+            padding: 0.5rem 5%; /* Padding réduit pour accommoder le logo */
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--blue-azure);
         }
 
-        .nav-logo {
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: var(--blue-ultramarine);
+        /* Nouveau style pour le LOGO cliquable du menu */
+        .nav-logo-link {
             display: flex;
             align-items: center;
-            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo-link img {
+            height: 60px; /* Taille idéale pour le menu */
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo-link img:hover {
+            transform: scale(1.05); /* Petit effet de zoom au survol */
         }
 
         .nav-links a {
@@ -52,8 +60,7 @@
             transition: color 0.3s;
         }
 
-        /* Pour mobile, on cache les liens si nécessaire ou on adapte, 
-           ici on garde simple pour l'exemple */
+        /* Menu simplifié mobile */
         @media (max-width: 600px) {
             .nav-links { display: none; }
         }
@@ -71,7 +78,7 @@
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(230, 0, 126, 0.3);
             transition: transform 0.2s, background-color 0.3s;
-            display: inline-block; /* Assure que le padding s'applique bien */
+            display: inline-block;
         }
 
         .btn-primary:hover {
@@ -105,7 +112,7 @@
         }
 
         .hero-content h1 {
-            font-size: clamp(2rem, 5vw, 3rem); /* Taille responsive */
+            font-size: clamp(2rem, 5vw, 3rem);
             color: var(--blue-ultramarine);
             margin: 0.5rem 0;
             line-height: 1.2;
@@ -166,7 +173,7 @@
 
         .profile-card {
             flex: 1;
-            min-width: 300px; /* Evite que ça devienne trop petit */
+            min-width: 300px;
         }
 
         .profile-card h2 {
@@ -265,9 +272,10 @@
 <body>
 
     <nav>
-        <div class="nav-logo">
-            <span>DYDY IT SERVICES</span>
-        </div>
+        <a href="index.html" class="nav-logo-link">
+            <img src="logo_dydyitservices.png" alt="Accueil Dydy IT Services">
+        </a>
+
         <div class="nav-links">
             <a href="#">Parcours</a>
             <a href="#">Ressources</a>
@@ -281,14 +289,14 @@
             <h1>Décodez les <span class="highlight">Systèmes & Réseaux</span> sans prise de tête.</h1>
             
             <p class="mission-quote">
-                "Je veux rendre l'apprentissage de l'informatique simple et intuitif pour être un.e technicien.ne / administrateur.e compétent."
+                "Je veux rendre l'apprentissage de l'informatique simple et intuitif pour être un.e technicien.ne / administrateur.e compétent.e."
             </p>
 
             <a href="#" class="btn-primary">Lancer ma session avec D.Code</a>
         </div>
 
         <div class="hero-image">
-            <img src="D_Code2.0.jpg" alt="D.Code, votre guide virtuel">
+            <img src="D_Code2.0.png" alt="D.Code, votre guide virtuel">
             <div class="avatar-label">Moi, c'est D.Code !</div>
         </div>
     </header>
@@ -328,12 +336,14 @@
     </section>
 
     <footer>
-        <div style="flex:1"></div> <div class="footer-copyright">
+        <div style="flex:1"></div> 
+        
+        <div class="footer-copyright">
             © 2026 DydyITServices - Formation Informatique
         </div>
 
         <div class="footer-logo" style="flex:1; text-align:right;">
-            <img src="Logo-dydyitservices_full.PNG" alt="Logo DydyITServices">
+            <img src="Logo-dydyitservices_full.png" alt="Logo DydyITServices">
         </div>
     </footer>
 
