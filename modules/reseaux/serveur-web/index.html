@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <!-- =========================================================
+       META
+       ========================================================= -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DydyITServices — Module : Démystifier le Serveur Web</title>
+
+  <!-- =========================================================
+       CHEMINS (important)
+       ---------------------------------------------------------
+       Cette page vit ici :
+       modules/reseaux/serveur-web/index.html
+
+       - Images du module (TES infographies) :
+         ./medias/intro.jpg
+         ./medias/Analogie1.jpg
+         ./medias/Analogie2.jpg
+         ./medias/Analogie3.jpg
+         ./medias/Analogie4.jpg
+         ./medias/resume.jpg
+
+       - Vidéo (globale du site, comme tu l'as demandé) :
+         <source src="./medias/RES_Serv_WEB_Demystifier_le_Serveur_Web.mp4" type="video/mp4">
+
+
+       - Images D.Code (globales du site) :
+         ../../../assets/img/D_Code2.0.jpg
+         ../../../assets/img/d_code2.0_right.jpg
+         ../../../assets/img/d_code2.0_thinking.jpg
+         ../../../assets/img/d_code2.0_idea.jpg
+
+       - PDF (dans le module) :
+         ./RES_SERV_WEB_Intro-Débutant_Cours.pdf
+       ========================================================= -->
+
+  <!-- CSS global du site (si existant) -->
+  <link rel="stylesheet" href="../../../assets/css/styles.css" />
+
+  <!-- =========================================================
+       CSS "fallback"
+       (Assure un rendu cohérent même si le CSS global évolue)
+       ========================================================= -->
+  <style>
+    :root {
+      /* Charte DydyITServices */
+      --blue-azure: #0F70B7;
+      --blue-ultramarine: #312783;
+      --purple: #811F82;
+      --pink-fuchsia: #E6007E;
+      --white: #ffffff;
+      --light-bg: #f4f6f9;
+
+      /* UI helpers */
+      --shadow-sm: 0 6px 18px rgba(0,0,0,0.08);
+      --shadow-md: 0 14px 40px rgba(15,112,183,0.18);
+      --radius-lg: 18px;
+      --container: min(1100px, 92vw);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      color: var(--blue-ultramarine);
+      background: var(--white);
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    .container { width: var(--container); margin: 0 auto; }
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: var(--white);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 0.5rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--blue-azure);
+      gap: 16px;
+    }
+    .nav-logo-link { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo-link img { height: 56px; width: auto; transition: transform 0.3s ease; }
+    .nav-logo-link img:hover { transform: scale(1.05); }
+    .nav-links { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; justify-content: flex-end; }
+    .nav-links a { text-decoration: none; font-weight: 900; }
+    .nav-links a:hover { color: var(--pink-fuchsia); }
+
+    .btn-primary {
+      background-color: var(--pink-fuchsia);
+      color: var(--white);
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 950;
+      box-shadow: 0 4px 15px rgba(230, 0, 126, 0.3);
+      transition: transform 0.2s, background-color 0.3s;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary:hover { background-color: var(--purple); transform: translateY(-2px); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid rgba(49,39,131,0.22);
+      color: var(--blue-ultramarine);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--pink-fuchsia); color: var(--pink-fuchsia); }
+
+    /* Bouton PDF */
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 950;
+      text-decoration: none;
+      background: rgba(15,112,183,0.06);
+      border: 2px solid rgba(15,112,183,0.25);
+      color: var(--blue-ultramarine);
+      transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .btn-pdf:hover {
+      transform: translateY(-1px);
+      border-color: var(--pink-fuchsia);
+      background: rgba(230,0,126,0.06);
+    }
+    .pdf-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 950;
+      background: var(--blue-ultramarine);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+    header.hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2.5rem;
+      padding: 3.5rem 10%;
+      background: linear-gradient(135deg, rgba(15,112,183,0.05) 0%, rgba(49,39,131,0.1) 100%);
+    }
+    .hero-content { flex: 1; }
+    .hero-tag {
+      background-color: var(--blue-azure);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: inline-block;
+      font-weight: 950;
+    }
+    .hero-content h1 {
+      font-size: clamp(2rem, 4.7vw, 3rem);
+      margin: 0.8rem 0 0.7rem;
+      line-height: 1.15;
+      color: var(--blue-ultramarine);
+    }
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--purple);
+      font-weight: 850;
+      margin: 0 0 1.1rem;
+      max-width: 90ch;
+    }
+    .mission-quote {
+      font-size: 1.02rem;
+      color: var(--purple);
+      font-style: italic;
+      border-left: 5px solid var(--blue-azure);
+      padding: 14px 16px;
+      border-radius: 0 12px 12px 0;
+      background: rgba(255,255,255,0.88);
+      box-shadow: var(--shadow-sm);
+      margin: 1rem 0 1.1rem;
+    }
+    .hero-image {
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    .hero-image img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(15, 112, 183, 0.3);
+      border: 4px solid var(--white);
+      outline: 3px solid var(--pink-fuchsia);
+    }
+    .avatar-label {
+      position: absolute;
+      bottom: -15px;
+      right: -10px;
+      background-color: var(--blue-ultramarine);
+      color: var(--white);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 950;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      font-size: 0.9rem;
+    }
+
+    /* =========================================================
+       SECTIONS / CARDS
+       ========================================================= */
+    section { padding: 3.5rem 10%; }
+    section.alt { background: var(--light-bg); }
+    .section-title { color: var(--blue-azure); font-size: 1.9rem; margin: 0 0 0.75rem; }
+    .section-lead { color: #444; margin: 0 0 1.5rem; max-width: 110ch; }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(49,39,131,0.10);
+      padding: 18px;
+      margin: 14px 0;
+    }
+    .card h3 { margin: 0 0 10px; color: var(--blue-ultramarine); font-size: 1.2rem; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .list { margin: 0; padding-left: 18px; color: #333; }
+    .list li { margin: 8px 0; }
+
+    /* =========================================================
+       CALLOUTS (encadrés)
+       ========================================================= */
+    .callout {
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      border: 1px solid rgba(49,39,131,0.10);
+      box-shadow: var(--shadow-sm);
+      background: rgba(255,255,255,0.92);
+      margin: 14px 0;
+    }
+    .callout.info { border-left: 6px solid var(--blue-azure); }
+    .callout.warn { border-left: 6px solid var(--pink-fuchsia); }
+    .callout h4 { margin: 0 0 6px; color: var(--blue-ultramarine); }
+    .callout p { margin: 0; color: #333; }
+
+    /* D.Code avatars */
+    .callout.with-avatar { display: flex; gap: 14px; align-items: flex-start; }
+    .dcode-avatar {
+      width: 88px;
+      flex: 0 0 auto;
+      border-radius: 16px;
+      border: 3px solid var(--white);
+      outline: 2px solid var(--pink-fuchsia);
+      box-shadow: var(--shadow-sm);
+    }
+    .callout-content { flex: 1; }
+
+    /* =========================================================
+       VIDEO
+       ========================================================= */
+    .video-wrap {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(49,39,131,0.12);
+      box-shadow: var(--shadow-md);
+      background: #000;
+    }
+    video { width: 100%; height: auto; display: block; }
+
+    /* =========================================================
+       FIGURES (infographies)
+       ========================================================= */
+    figure.infographie {
+      margin: 14px 0;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(49,39,131,0.12);
+      box-shadow: var(--shadow-sm);
+      background: white;
+    }
+    figure.infographie img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    figure.infographie figcaption {
+      padding: 10px 12px;
+      color: #444;
+      font-weight: 850;
+      border-top: 1px solid rgba(49,39,131,0.10);
+    }
+
+    /* =========================================================
+       SOMMAIRE
+       ========================================================= */
+    .toc {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(49,39,131,0.10);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 14px 16px;
+      margin: 14px 0;
+    }
+    .toc a { text-decoration: none; font-weight: 900; color: var(--blue-ultramarine); }
+    .toc a:hover { color: var(--pink-fuchsia); }
+
+    /* =========================================================
+       PROGRESS (sticky)
+       ========================================================= */
+    .progress-bar {
+      position: sticky;
+      top: 74px;
+      z-index: 40;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(49,39,131,0.12);
+      padding: 10px 5%;
+    }
+    .progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .progress-meter {
+      flex: 1;
+      min-width: 260px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(49,39,131,0.10);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue-azure), var(--pink-fuchsia));
+      transition: width 0.3s ease;
+    }
+
+    /* =========================================================
+       CODE / TP
+       ========================================================= */
+    pre {
+      background: #0f1224;
+      color: #f1f1f1;
+      padding: 14px;
+      border-radius: 14px;
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin: 12px 0;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .tp {
+      background: linear-gradient(135deg, rgba(15,112,183,0.06), rgba(230,0,126,0.06));
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      border: 1px solid rgba(49,39,131,0.10);
+      box-shadow: var(--shadow-sm);
+      margin: 16px 0;
+    }
+
+    /* =========================================================
+       QUIZ
+       ========================================================= */
+    .quiz-header {
+      text-align: center;
+      background: var(--blue-ultramarine);
+      color: white;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-top: 10px;
+    }
+
+    .question-card {
+      background: var(--white);
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 2px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+    .question-title { font-weight: 950; color: var(--blue-ultramarine); margin-bottom: 10px; }
+    .options label {
+      display: block;
+      padding: 10px;
+      margin: 6px 0;
+      background: rgba(15,112,183,0.06);
+      border: 1px solid rgba(15,112,183,0.10);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.2s ease;
+    }
+    .options label:hover { background: rgba(230,0,126,0.06); transform: translateY(-1px); }
+    .options input { margin-right: 10px; }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(49,39,131,0.06);
+      border: 1px solid rgba(49,39,131,0.10);
+      color: #333;
+      font-size: 0.95rem;
+    }
+    .question-card.correct { border-color: #27ae60; }
+    .question-card.correct .feedback {
+      display: block;
+      background: rgba(39,174,96,0.12);
+      border-color: rgba(39,174,96,0.25);
+    }
+    .question-card.incorrect { border-color: #c0392b; }
+    .question-card.incorrect .feedback {
+      display: block;
+      background: rgba(192,57,43,0.12);
+      border-color: rgba(192,57,43,0.25);
+    }
+
+    #score-display {
+      display: none;
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 950;
+      padding: 16px;
+      margin: 16px 0;
+      background: var(--blue-ultramarine);
+      color: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer {
+      background-color: var(--light-bg);
+      border-top: 5px solid var(--blue-ultramarine);
+      padding: 2rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .footer-left, .footer-right { flex: 1; min-width: 240px; }
+    .footer-center { flex: 1; min-width: 240px; text-align: center; }
+    .footer-links { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: flex-start; }
+    .footer-links a {
+      text-decoration: none;
+      font-weight: 950;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .footer-links a:hover { color: var(--pink-fuchsia); border-color: var(--pink-fuchsia); }
+    .footer-logo { text-align: right; }
+    .footer-logo img { height: 50px; width: auto; }
+    .footer-copy { font-weight: 950; font-size: 0.9rem; }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 980px) {
+      header.hero { flex-direction: column-reverse; text-align: center; padding: 2.5rem 6%; }
+      section { padding: 3rem 6%; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero-image { max-width: 78%; margin: 0 auto 1rem; }
+      .mission-quote { border-left: none; border-top: 5px solid var(--blue-azure); border-radius: 12px; }
+      .progress-bar { top: 66px; }
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+      .footer-logo { text-align: center; }
+    }
+    @media (max-width: 700px) {
+      .callout.with-avatar { flex-direction: column; }
+      .dcode-avatar { width: 110px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================================================
+       NAVBAR (liens vers pages globales)
+       ========================================================= -->
+  <nav>
+    <!-- Logo => retourne à l'accueil du site -->
+    <a href="../../../index.html" class="nav-logo-link" aria-label="Accueil">
+      <img src="../../../assets/img/logo_dydyitservices.png" alt="Accueil Dydy IT Services">
+    </a>
+
+    <div class="nav-links">
+      <a href="../../../modules.html">Modules</a>
+      <a href="../../../apropos.html">À propos</a>
+      <a href="../../../modules.html" class="btn-primary">Voir les modules</a>
+    </div>
+  </nav>
+
+  <!-- =========================================================
+       HERO
+       ========================================================= -->
+  <header class="hero" id="top">
+    <div class="hero-content">
+      <span class="hero-tag">Module interactif</span>
+      <h1>Démystifier le serveur web</h1>
+
+      <p class="subtitle">
+        Ordre du module (logique BTS) : Vidéo → PDF → Cours → TP → Niveau 2 (débrief & industrialisation) → Quiz.
+      </p>
+
+      <p class="mission-quote">
+        Objectif : comprendre ce qui se passe derrière une URL, puis installer/configurer/diagnostiquer un serveur web comme un vrai admin.
+      </p>
+
+      <!-- Sommaire (ancres) -->
+      <div class="toc">
+        <strong style="color: var(--blue-azure);">Sommaire :</strong>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+          <a href="#video">Vidéo</a>
+          <a href="#pdf">PDF</a>
+          <a href="#cours">Cours</a>
+          <a href="#tp">TP</a>
+          <a href="#niveau2">Niveau 2</a>
+          <a href="#quiz">Quiz</a>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 8px;">
+        <a href="#tp" class="btn-primary">Aller au TP</a>
+        <a href="#quiz" class="btn-secondary">Valider avec le quiz</a>
+      </div>
+    </div>
+
+    <!-- D.Code : ton guide visuel -->
+    <div class="hero-image">
+      <img src="../../../assets/img/D_Code2.0.jpg" alt="D.Code, votre guide virtuel">
+      <div class="avatar-label">D.Code te guide</div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       BARRE DE PROGRESSION (sauvegarde locale)
+       ========================================================= -->
+  <div class="progress-bar" aria-label="Progression du module">
+    <div class="progress-row">
+      <div style="font-weight:950;">
+        Progression : <span id="progressText">0%</span>
+      </div>
+
+      <div class="progress-meter" aria-hidden="true">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn-secondary" type="button" id="resetProgressBtn">Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SECTION VIDEO
+       ========================================================= -->
+  <section class="alt" id="video">
+    <div class="container">
+      <h2 class="section-title">Vidéo d’introduction</h2>
+      <p class="section-lead">
+        Regarde la vidéo une première fois. Ensuite, on “fixe” les notions avec le PDF et le cours interactif.
+        (Oui, on s’échauffe avant de soulever de l’Apache.)
+      </p>
+
+      <div class="video-wrap" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <iframe 
+          src="https://www.youtube.com/embed/7gKFpCipS74?si=D8QFx05iGw3gF964" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" 
+          allowfullscreen
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+        ></iframe>
+      </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top: 12px; flex-wrap: wrap;">
+          <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+            <input type="checkbox" class="progress-check" data-step="video">
+            J’ai regardé la vidéo
+          </label>
+          <span style="color:#444;">(sauvegardé automatiquement)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION PDF (support)
+       ========================================================= -->
+  <section id="pdf">
+    <div class="container">
+      <h2 class="section-title">Support PDF (cours introductif)</h2>
+      <p class="section-lead">
+        Tu peux ouvrir le PDF dans un nouvel onglet, ou le télécharger.
+        Ensuite, on reprend les mêmes idées ici, en version interactive + TP.
+      </p>
+
+    <div class="card">
+  <!-- Un seul lien PDF (ouverture). Le téléchargement reste possible via le lecteur PDF du navigateur -->
+  <a class="btn-pdf" href="./RES_SERV_WEB_Intro-Débutant_Cours.pdf" target="_blank" rel="noopener">
+    <span class="pdf-icon">PDF</span>
+    <span>
+      <span style="display:block; font-size: 0.95rem;">Ouvrir le support :</span>
+      <span style="display:block; font-size: 1.05rem; color: var(--blue-ultramarine);">
+        RES_SERV_WEB_Intro-Débutant_Cours.pdf
+      </span>
+    </span>
+  </a>
+
+  <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+    <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+      <input type="checkbox" class="progress-check" data-step="pdf">
+      J’ai consulté le PDF
+    </label>
+  </div>
+
+  <!-- Conseil D.Code -->
+      <div class="callout info with-avatar" style="margin-top: 14px;">
+        <img class="dcode-avatar" src="../../../assets/img/d_code2.0_right.jpg" alt="D.Code - validation" loading="lazy">
+          <div class="callout-content">
+            <h4>D.Code te conseille</h4>
+            <p>
+              Lis le PDF une première fois “en diagonale”, puis reviens ici.
+              Le duo <strong>cours + TP + quiz</strong> te fait passer de “je vois” à “je sais faire”.
+            </p>
+       </div>
+  </div>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION COURS (complet + images au bon endroit)
+       ========================================================= -->
+  <section id="cours">
+    <div class="container">
+      <h2 class="section-title">Cours (version web)</h2>
+      <p class="section-lead">
+        On reprend les notions du PDF, mais avec des explications “web” (claires, progressives) et des repères
+        pour le TP. Objectif : que tu puisses <strong>expliquer</strong> et <strong>appliquer</strong>.
+      </p>
+
+      <!-- =====================================================
+           INTRO (image "intro.jpg" => vision globale)
+           ===================================================== -->
+      <div class="card">
+        <h3>0) Vision globale : qu’est-ce qu’un serveur web ?</h3>
+        <p style="color:#333;">
+          Un <strong>serveur web</strong> est un ordinateur (ou une VM) qui exécute un logiciel capable de répondre aux
+          requêtes des utilisateurs via Internet. Il est en général <strong>allumé en permanence</strong> et son rôle principal
+          est de livrer un contenu (pages web, images, fichiers) ou de servir d’entrée vers une application.
+        </p>
+
+        <p style="color:#333;">
+          Pour éviter un gros malentendu : le serveur web n’est pas “le site”. Le serveur web est le <strong>logiciel</strong>
+          (Apache, Nginx, IIS…) qui reçoit la demande. Le site web, c’est le <strong>contenu</strong> (fichiers HTML/CSS/JS, images,
+          ou une application dynamique) que le serveur renvoie.
+        </p>
+
+        <!-- Infographie "intro.jpg" -->
+        <figure class="infographie">
+          <img src="./medias/intro.jpg" alt="Infographie : introduction aux serveurs web — vue d’ensemble">
+          <figcaption>Infographie — Vue d’ensemble : serveur web, contenu, types de contenu</figcaption>
+        </figure>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_intro">
+          OK : je sais définir un serveur web
+        </label>
+      </div>
+
+      <!-- =====================================================
+           COMMENT CA MARCHE ? (image "Analogie4.jpg" = client/serveur)
+           ===================================================== -->
+      <div class="card">
+        <h3>1) Comment ça marche ? (Client → Requête → Serveur → Réponse)</h3>
+
+        <p style="color:#333;">
+          Quand tu tapes une URL (ex : <code>https://monsite.fr</code>) dans ton navigateur, tu déclenches une séquence
+          très simple… mais très importante.
+        </p>
+
+        <ul class="list">
+          <li><strong>Le client</strong> : ton navigateur (Chrome, Firefox, Edge…).</li>
+          <li><strong>La requête</strong> : le navigateur demande une ressource (une page, une image, un fichier…).</li>
+          <li><strong>Le serveur web</strong> : reçoit la requête, cherche le contenu demandé, renvoie une réponse.</li>
+          <li><strong>La réponse</strong> : le serveur renvoie des fichiers (HTML/CSS/JS, images) ou un contenu généré.</li>
+        </ul>
+
+        <p style="color:#333;">
+          Voici un schéma texte simplifié (ça aide à le mémoriser sans dépendre d’une image) :
+        </p>
+
+        <pre><code>Navigateur (client)  --(requête URL)-->  Serveur Web
+Navigateur (client)  <--(réponse)------   (HTML/CSS/JS, images, données)</code></pre>
+
+        <!-- Infographie "Analogie4.jpg" (hébergement / navigateur / serveur) -->
+        <figure class="infographie">
+          <img src="./medias/Analogie4.jpg" alt="Infographie : hébergement d’une page web — navigateur, requête, serveur, réponse">
+          <figcaption>Infographie — Requête (URL) → Serveur Web → Réponse (fichiers)</figcaption>
+        </figure>
+
+        <div class="callout info with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_idea.jpg" alt="D.Code - idée" loading="lazy">
+          <div class="callout-content">
+            <h4>À retenir</h4>
+            <p>
+              Tant que tu n’as pas compris ce trajet, le dépannage web ressemble à de la magie noire.
+              Une fois que tu l’as compris, tu peux diagnostiquer “où ça bloque”.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_requete">
+          Compris : le trajet d’une requête web
+        </label>
+      </div>
+
+      <!-- =====================================================
+           ANALOGIE RESTAURANT (image "resume.jpg" ou "Analogie4.jpg" déjà
+           + image "resume.jpg" en fin de cours)
+           ===================================================== -->
+      <div class="card">
+        <h3>2) L’analogie du restaurant (pour simplifier sans simplifier à l’excès)</h3>
+
+        <p style="color:#333;">
+          On utilise une analogie “restaurant” parce qu’elle est très efficace en BTS : elle t’aide à mémoriser
+          qui fait quoi, sans te noyer dans le jargon.
+        </p>
+
+        <ul class="list">
+          <li><strong>Le client</strong> = l’utilisateur (toi) + le navigateur.</li>
+          <li><strong>La commande</strong> = la requête web (URL, méthode HTTP).</li>
+          <li><strong>Le restaurant</strong> = le serveur web (machine + logiciels).</li>
+          <li><strong>Le plat</strong> = la réponse (fichiers ou contenu généré).</li>
+        </ul>
+
+        <div class="callout warn with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_thinking.jpg" alt="D.Code - réflexion" loading="lazy">
+          <div class="callout-content">
+            <h4>Erreur classique</h4>
+            <p>
+              Dire “le serveur web c’est le site”. Non : le serveur web sert le site.
+              Comme le serveur en salle sert le plat, mais n’est pas le plat.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_analogie_restaurant">
+          OK : je comprends l’analogie restaurant
+        </label>
+      </div>
+
+      <!-- =====================================================
+           COMPOSANTS HARDWARE (Analogie1)
+           ===================================================== -->
+      <div class="card">
+        <h3>3) Les composants matériels (Hardware) : ce que la machine apporte</h3>
+
+        <p style="color:#333;">
+          Un serveur web, même en VM, repose sur du matériel (ou des ressources virtuelles) :
+          processeur, mémoire, disque, réseau. Si l’un de ces éléments est trop faible ou mal configuré,
+          tu auras des lenteurs, des erreurs, voire un service indisponible.
+        </p>
+
+        <ul class="list">
+          <li><strong>CPU (processeur)</strong> : exécute les programmes et traite les requêtes.</li>
+          <li><strong>RAM</strong> : conserve temporairement les données en cours d’utilisation.</li>
+          <li><strong>Stockage (HDD/SSD)</strong> : conserve les fichiers du site (HTML/CSS/JS, images, etc.).</li>
+          <li><strong>Carte réseau</strong> : gère la communication via Internet / réseau local.</li>
+        </ul>
+
+        <p style="color:#333;">
+          Dans un TP, tu le verras vite : une VM avec 1 vCPU et 512 Mo de RAM peut faire tourner Apache,
+          mais dès que tu ajoutes du trafic, des logs, une base de données… elle commence à “souffler”.
+        </p>
+
+        <!-- Infographie "Analogie1.jpg" -->
+        <figure class="infographie">
+          <img src="./medias/Analogie1.jpg" alt="Infographie : analogie technique-restaurant — composants matériels du serveur web">
+          <figcaption>Infographie — Matériel : CPU / RAM / Stockage / Réseau (version “restaurant”)</figcaption>
+        </figure>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_hw">
+          OK : je connais les composants matériels
+        </label>
+      </div>
+
+      <!-- =====================================================
+           COMPOSANTS SOFTWARE (Analogie2)
+           ===================================================== -->
+      <div class="card">
+        <h3>4) Les composants logiciels (Software) : ce qui rend le serveur “utile”</h3>
+
+        <p style="color:#333;">
+          Le matériel tout seul ne sert à rien sans les logiciels. Dans un serveur web, les 3 grands
+          blocs logiciels qu’on retrouve le plus souvent sont :
+        </p>
+
+        <ul class="list">
+          <li><strong>Système d’exploitation (OS)</strong> : gère les ressources matérielles (Linux, Windows Server).</li>
+          <li><strong>Logiciel serveur web</strong> : écoute les requêtes et renvoie les fichiers (Apache, Nginx, IIS).</li>
+          <li><strong>Base de données</strong> : stocke des informations “dynamiques” (profils, articles, commandes…).</li>
+        </ul>
+
+        <p style="color:#333;">
+          Le serveur web (Apache/Nginx) est comme un “maître d’hôtel” : il reçoit la demande et sert ce qui est demandé.
+          Mais si la page doit être <strong>générée</strong> (site dynamique), il passe la main à une application ou à une base de données.
+        </p>
+
+        <!-- Infographie "Analogie2.jpg" -->
+        <figure class="infographie">
+          <img src="./medias/Analogie2.jpg" alt="Infographie : analogie logiciel-restaurant — rôle du logiciel du serveur web">
+          <figcaption>Infographie — Logiciels : OS / Serveur Web / Base de données (version “restaurant”)</figcaption>
+        </figure>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_sw">
+          OK : je comprends le rôle des logiciels
+        </label>
+      </div>
+
+      <!-- =====================================================
+           STATIQUE VS DYNAMIQUE (Analogie3)
+           ===================================================== -->
+      <div class="card">
+        <h3>5) Site statique vs site dynamique (différence essentielle)</h3>
+
+        <p style="color:#333;">
+          Cette partie est <strong>vraiment</strong> importante : c’est une question classique en examen et une base pour comprendre
+          pourquoi certains sites sont simples à héberger, et d’autres beaucoup plus “capricieux”.
+        </p>
+
+        <h4 style="margin: 10px 0 6px; color: var(--purple);">Site statique</h4>
+        <p style="color:#333;">
+          Un site statique est composé de fichiers prêts à être servis : HTML, CSS, JavaScript, images.
+          Le serveur web renvoie ces fichiers tels quels. C’est rapide, simple et fiable.
+        </p>
+        <ul class="list">
+          <li>Exemples : page vitrine, portfolio, documentation, page de cours.</li>
+          <li>Avantages : performance, sécurité plus simple, peu de dépendances.</li>
+          <li>Inconvénient : contenu moins personnalisé (pas de comptes, pas de panier, etc.).</li>
+        </ul>
+
+        <h4 style="margin: 10px 0 6px; color: var(--purple);">Site dynamique</h4>
+        <p style="color:#333;">
+          Un site dynamique génère le contenu à la demande. Le serveur web devient alors un “point d’entrée” qui va
+          solliciter une application (PHP, Python, Node.js…) et souvent une base de données.
+        </p>
+        <ul class="list">
+          <li>Exemples : e-commerce, réseaux sociaux, espaces membres, dashboards.</li>
+          <li>Avantages : personnalisation, interaction, données en temps réel.</li>
+          <li>Inconvénient : plus complexe (app + BDD + sécurité + performance).</li>
+        </ul>
+
+        <!-- Infographie "Analogie3.jpg" -->
+        <figure class="infographie">
+          <img src="./medias/Analogie3.jpg" alt="Infographie : site web statique vs site web dynamique">
+          <figcaption>Infographie — Statique vs Dynamique (serveur web, app, base de données)</figcaption>
+        </figure>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_static_dynamic">
+          Compris : statique vs dynamique
+        </label>
+      </div>
+
+      <!-- =====================================================
+           HTTP (méthodes + codes)
+           ===================================================== -->
+      <div class="card">
+        <h3>6) HTTP : méthodes + codes d’état (kit de survie)</h3>
+
+        <p style="color:#333;">
+          Quand un client parle à un serveur web, ils utilisent le protocole <strong>HTTP</strong> (ou HTTPS).
+          Le client envoie une requête avec une <strong>méthode</strong> (ex: GET), et le serveur renvoie une réponse avec un
+          <strong>code d’état</strong> (ex: 200).
+        </p>
+
+        <div class="grid-2">
+          <div class="card" style="margin:0;">
+            <h3 style="font-size:1.05rem;">Méthodes essentielles</h3>
+            <ul class="list">
+              <li><strong>GET</strong> : demander une ressource (lire une page)</li>
+              <li><strong>POST</strong> : envoyer des données (formulaire, login)</li>
+            </ul>
+            <p style="color:#333; margin-top: 8px;">
+              Dans la plupart des cas en TP, tu verras surtout GET. POST intervient dès qu’on envoie des données.
+            </p>
+          </div>
+
+          <div class="card" style="margin:0;">
+            <h3 style="font-size:1.05rem;">Codes d’état à connaître</h3>
+            <ul class="list">
+              <li><code>200</code> OK : tout va bien</li>
+              <li><code>301</code> Moved Permanently : redirection</li>
+              <li><code>403</code> Forbidden : accès refusé</li>
+              <li><code>404</code> Not Found : ressource introuvable</li>
+              <li><code>500</code> Internal Server Error : erreur côté serveur</li>
+            </ul>
+            <p style="color:#333; margin-top: 8px;">
+              En dépannage : <strong>403</strong> = souvent droits/permissions, <strong>404</strong> = chemin, <strong>500</strong> = config/app.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout info with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_idea.jpg" alt="D.Code - idée" loading="lazy">
+          <div class="callout-content">
+            <h4>Commande utile</h4>
+            <p>
+              <code>curl -I http://localhost</code> : tu obtiens directement le code HTTP et les en-têtes.
+              C’est une façon “admin” de tester sans navigateur.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_http">
+          OK : méthodes + codes HTTP
+        </label>
+      </div>
+
+      <!-- =====================================================
+           DNS (A / AAAA)
+           ===================================================== -->
+      <div class="card">
+        <h3>7) DNS : le GPS du web (A / AAAA)</h3>
+
+        <p style="color:#333;">
+          Avant d’accéder à un serveur, il faut transformer un nom (ex: <code>monsite.fr</code>) en adresse IP.
+          C’est le rôle du <strong>DNS</strong>.
+        </p>
+
+        <ul class="list">
+          <li><strong>A</strong> : nom → IPv4</li>
+          <li><strong>AAAA</strong> : nom → IPv6</li>
+        </ul>
+
+        <p style="color:#333;">
+          Sans DNS correct, tu peux avoir un serveur parfaitement configuré… et un site “invisible” parce que personne
+          n’arrive sur la bonne IP.
+        </p>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_dns">
+          OK : enregistrements A/AAAA
+        </label>
+      </div>
+
+      <!-- =====================================================
+           Apache vs Nginx
+           ===================================================== -->
+      <div class="card">
+        <h3>8) Apache vs Nginx : choix et implications</h3>
+
+        <p style="color:#333;">
+          Les deux sont des serveurs web très utilisés. Ton TP se concentre sur Apache (très fréquent en formation),
+          mais tu dois comprendre pourquoi Nginx revient souvent dans les architectures modernes.
+        </p>
+
+        <ul class="list">
+          <li><strong>Apache</strong> : très flexible, modules, configuration historique, peut utiliser <code>.htaccess</code>.</li>
+          <li><strong>Nginx</strong> : architecture asynchrone, très performant, souvent utilisé comme reverse proxy.</li>
+        </ul>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_apache_nginx">
+          OK : différences Apache / Nginx
+        </label>
+      </div>
+
+      <!-- =====================================================
+           Virtual Hosts (structures Debian/Ubuntu)
+           ===================================================== -->
+      <div class="card">
+        <h3>9) Virtual Hosts : héberger plusieurs sites sur un même serveur</h3>
+
+        <p style="color:#333;">
+          Les <strong>Virtual Hosts</strong> permettent à un même serveur Apache d’héberger plusieurs sites.
+          Sur Debian/Ubuntu, le fonctionnement est standard :
+        </p>
+
+        <ul class="list">
+          <li><code>/etc/apache2/sites-available/</code> : configurations disponibles (stockées)</li>
+          <li><code>/etc/apache2/sites-enabled/</code> : configurations actives (liens symboliques)</li>
+        </ul>
+
+        <p style="color:#333;">
+          Exemple minimal :
+        </p>
+
+        <pre><code>&lt;VirtualHost *:80&gt;
+  ServerName www.monsite.com
+  DocumentRoot /var/www/monsite
+&lt;/VirtualHost&gt;</code></pre>
+
+        <p style="color:#333;">
+          <strong>DocumentRoot</strong> indique le dossier qui contient le site (fichiers). Si ce chemin est faux,
+          tu obtiens des erreurs 404 ou un site vide.
+        </p>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_vhost">
+          OK : structure VirtualHost
+        </label>
+      </div>
+
+      <!-- =====================================================
+           Sécurité & permissions
+           ===================================================== -->
+      <div class="card">
+        <h3>10) Sécurité : droits, utilisateur www-data, HTTPS</h3>
+
+        <p style="color:#333;">
+          Apache tourne sous un utilisateur système (souvent <code>www-data</code>). Cet utilisateur doit pouvoir lire
+          les fichiers du site, mais pas tout modifier “sans limites”.
+        </p>
+
+        <div class="callout warn with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_thinking.jpg" alt="D.Code - réflexion" loading="lazy">
+          <div class="callout-content">
+            <h4>Le 777 : non</h4>
+            <p>Le <code>777</code> donne tous les droits à tout le monde. En prod, c’est un carton d’invitation aux ennuis.</p>
+          </div>
+        </div>
+
+        <ul class="list">
+          <li><strong>Dossiers</strong> : 755</li>
+          <li><strong>Fichiers</strong> : 644</li>
+        </ul>
+
+        <p style="color:#333;">
+          Pour le HTTPS, on utilise le port 443 et des certificats (souvent via Certbot / Let’s Encrypt).
+          On le verra dans le Niveau 2 (recette rapide).
+        </p>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_secu">
+          OK : permissions + HTTPS
+        </label>
+      </div>
+
+      <!-- =====================================================
+           Logs & diagnostic (préparation TP)
+           ===================================================== -->
+      <div class="card">
+        <h3>11) Logs : diagnostiquer comme un admin (préparation TP)</h3>
+
+        <p style="color:#333;">
+          Les logs sont la “source de vérité”. Si ton site affiche une erreur, tu ne devines pas : tu lis les logs.
+          Sur Debian/Ubuntu, Apache enregistre généralement ici : <code>/var/log/apache2/</code>.
+        </p>
+
+        <ul class="list">
+          <li><strong>access.log</strong> : les requêtes reçues (qui demande quoi)</li>
+          <li><strong>error.log</strong> : les erreurs serveur (pourquoi ça casse)</li>
+        </ul>
+
+        <pre><code>tail -f /var/log/apache2/access.log
+tail -f /var/log/apache2/error.log</code></pre>
+
+        <p style="color:#333;">
+          Si tu dois retenir une seule chose : une erreur 500 se comprend presque toujours via <code>error.log</code>.
+        </p>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_logs">
+          OK : je sais où lire les logs
+        </label>
+      </div>
+
+      <!-- =====================================================
+           Reverse proxy & load balancing (pour le quiz Q14/Q15)
+           ===================================================== -->
+      <div class="card">
+        <h3>12) Architectures avancées (Reverse Proxy & Load Balancing)</h3>
+
+        <p style="color:#333;">
+          Même si ton TP se focalise sur un serveur unique, il faut comprendre ce qu’on met en place
+          quand un site devient “gros” ou exige de la haute disponibilité.
+        </p>
+
+        <ul class="list">
+          <li>
+            <strong>Reverse Proxy</strong> : un serveur intermédiaire qui reçoit les requêtes,
+            gère la sécurité (SSL), parfois le cache, puis transmet à un serveur interne.
+          </li>
+          <li>
+            <strong>Load Balancing</strong> : répartit le trafic entre plusieurs serveurs (Web1/Web2/Web3)
+            pour éviter qu’un seul serveur sature.
+          </li>
+        </ul>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_proxy_lb">
+          Compris : Reverse Proxy & Load Balancing
+        </label>
+      </div>
+
+      <!-- =====================================================
+           RESUME (image "resume.jpg" en fin de cours)
+           ===================================================== -->
+      <div class="card">
+        <h3>13) Résumé (à savoir expliquer à l’oral)</h3>
+
+        <p style="color:#333;">
+          Pour réussir un examen ou une mise en situation, tu dois pouvoir résumer clairement :
+          “Un serveur web est un système (matériel + logiciel) qui répond à des requêtes HTTP/HTTPS et renvoie des ressources.
+          Il peut servir du contenu statique (fichiers) ou dynamique (généré via app + base de données).
+          Pour diagnostiquer, on s’appuie sur les codes HTTP et les logs.”
+        </p>
+
+        <!-- Infographie "resume.jpg" -->
+        <figure class="infographie">
+          <img src="./medias/resume.jpg" alt="Infographie : résumé des serveurs web — guide du débutant">
+          <figcaption>Infographie — Résumé : définitions, fonctionnement, composants, types de contenu</figcaption>
+        </figure>
+
+        <div class="callout info with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_right.jpg" alt="D.Code - validation" loading="lazy">
+          <div class="callout-content">
+            <h4>Objectif atteint si…</h4>
+            <p>
+              Tu sais expliquer ces 4 points sans lire :
+              (1) trajet requête/réponse, (2) composants hardware, (3) composants software,
+              (4) statique vs dynamique.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="cours_resume">
+          OK : je sais résumer le cours
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION TP (avant Niveau 2)
+       ========================================================= -->
+  <section class="alt" id="tp">
+    <div class="container">
+      <h2 class="section-title">TP : Administration d’un serveur web (Apache)</h2>
+      <p class="section-lead">
+        On passe à la pratique. Ensuite, le Niveau 2 t’ajoute les réflexes “admin essentiel”
+        (tests, diagnostic, activation modules/vhosts, HTTPS rapide).
+      </p>
+
+      <!-- TP 1 -->
+      <div class="tp">
+        <h3>TP 1 — Contrôler le service Apache (start/stop/reload/restart)</h3>
+
+        <p style="color:#333;">
+          Objectif : comprendre la différence entre <strong>restart</strong> et <strong>reload</strong>.
+          En entreprise, on préfère <strong>reload</strong> quand c’est possible (moins d’impact sur les utilisateurs).
+        </p>
+
+        <pre><code>sudo systemctl start apache2    # Démarrer
+sudo systemctl stop apache2     # Arrêter
+sudo systemctl restart apache2  # Redémarrage (coupure)
+sudo systemctl reload apache2   # Recharger config (sans coupure)</code></pre>
+
+        <p style="color:#333;">
+          Vérifie le statut :
+        </p>
+        <pre><code>systemctl status apache2</code></pre>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="tp1">
+          TP 1 terminé
+        </label>
+      </div>
+
+      <!-- TP 2 -->
+      <div class="tp">
+        <h3>TP 2 — Créer un VirtualHost + l’activer proprement</h3>
+
+        <p style="color:#333;">
+          Objectif : héberger un site via un vhost et éviter l’erreur “ça marche chez moi mais pas sur le serveur”.
+          Tu vas créer un fichier de conf dans <code>sites-available</code>, l’activer avec <code>a2ensite</code>,
+          puis valider la configuration.
+        </p>
+
+        <pre><code># 1) Créer la config
+sudo nano /etc/apache2/sites-available/monsite.conf
+
+# 2) Activer le site
+sudo a2ensite monsite.conf
+
+# 3) Vérifier la config (très important)
+sudo apachectl configtest
+
+# 4) Appliquer sans couper (si possible)
+sudo systemctl reload apache2</code></pre>
+
+        <div class="callout warn with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_thinking.jpg" alt="D.Code - réflexion" loading="lazy">
+          <div class="callout-content">
+            <h4>Si ça échoue…</h4>
+            <p>
+              Si <code>configtest</code> te renvoie une erreur, tu corriges AVANT de reload.
+              Sinon, tu transformes ton serveur en “machine à erreurs 500”.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="tp2">
+          TP 2 terminé
+        </label>
+      </div>
+
+      <!-- TP 3 -->
+      <div class="tp">
+        <h3>TP 3 — Permissions + logs : diagnostiquer un problème</h3>
+
+        <p style="color:#333;">
+          Objectif : faire du dépannage “réaliste”.
+          Tu vas observer les logs et faire le lien entre ce que tu vois dans le navigateur (403/404/500)
+          et ce que le serveur écrit dans ses fichiers de log.
+        </p>
+
+        <ul class="list">
+          <li>Provoque un 404 (URL inexistante) et observe <code>access.log</code>.</li>
+          <li>Vérifie un cas 403 (droits) en jouant sur les permissions (prudemment).</li>
+          <li>Observe le fichier <code>error.log</code> : c’est lui qui explique les erreurs serveur.</li>
+        </ul>
+
+        <pre><code>tail -f /var/log/apache2/access.log
+tail -f /var/log/apache2/error.log</code></pre>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="tp3">
+          TP 3 terminé
+        </label>
+      </div>
+
+      <!-- TP 4 (mini) : test HTTP en mode admin -->
+      <div class="tp">
+        <h3>TP 4 — Tests rapides (curl + ports)</h3>
+
+        <p style="color:#333;">
+          Objectif : apprendre à tester sans interface graphique. Indispensable en entreprise (serveurs headless).
+        </p>
+
+        <pre><code># Voir le code HTTP + headers
+curl -I http://localhost
+
+# Vérifier que le serveur écoute sur le port 80
+ss -tulpn | grep ':80'</code></pre>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="tp4">
+          TP 4 terminé
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION NIVEAU 2 (suite du TP)
+       ========================================================= -->
+  <section id="niveau2">
+    <div class="container">
+      <h2 class="section-title">Niveau 2 — Admin essentiel (suite du TP)</h2>
+      <p class="section-lead">
+        Ici on consolide : tu as fait, maintenant tu rends ça “propre” et reproductible.
+        On ajoute les commandes et pratiques qui font gagner du temps et éviter les pannes.
+      </p>
+
+      <!-- Niveau 2A -->
+      <div class="card">
+        <h3>A) Installation + tests (curl, ss, configtest, journalctl)</h3>
+
+        <p style="color:#333;">
+          Dans un vrai contexte admin, tu dois pouvoir vérifier rapidement :
+          “Le service est-il installé ? Démarré ? Écoute-t-il sur le bon port ? Les logs système disent quoi ?”.
+        </p>
+
+        <pre><code>sudo apt update
+sudo apt install apache2 -y</code></pre>
+
+        <ul class="list">
+          <li><strong>Tester HTTP</strong> : <code>curl -I http://localhost</code></li>
+          <li><strong>Vérifier les ports</strong> : <code>ss -tulpn | grep -E ':80|:443'</code></li>
+          <li><strong>Vérifier la config Apache</strong> : <code>sudo apachectl configtest</code></li>
+          <li><strong>Logs systemd</strong> : <code>sudo journalctl -u apache2 -xe</code></li>
+        </ul>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="lvl2a">
+          Niveau 2A OK
+        </label>
+      </div>
+
+      <!-- Niveau 2B -->
+      <div class="card">
+        <h3>B) Activation vhost/module (a2ensite, a2enmod)</h3>
+
+        <p style="color:#333;">
+          Apache sous Debian/Ubuntu utilise des commandes pratiques :
+          <code>a2ensite</code> pour activer un site, <code>a2enmod</code> pour activer un module.
+          Ça évite de manipuler des liens symboliques à la main.
+        </p>
+
+        <pre><code># Activer / désactiver un site
+sudo a2ensite monsite.conf
+sudo a2dissite monsite.conf
+
+# Activer un module (ex: rewrite)
+sudo a2enmod rewrite
+
+# Recharger Apache (sans couper si possible)
+sudo systemctl reload apache2</code></pre>
+
+        <div class="callout warn with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_thinking.jpg" alt="D.Code - réflexion" loading="lazy">
+          <div class="callout-content">
+            <h4>Règle d’or</h4>
+            <p>
+              Après un changement : <code>apachectl configtest</code> puis <code>reload</code>.
+              Restart uniquement si nécessaire.
+            </p>
+          </div>
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="lvl2b">
+          Niveau 2B OK
+        </label>
+      </div>
+
+      <!-- Niveau 2C -->
+      <div class="card">
+        <h3>C) HTTPS Certbot (recette rapide)</h3>
+
+        <p style="color:#333;">
+          Le HTTPS chiffre la communication (important pour la sécurité). Avec Let’s Encrypt, on peut obtenir des
+          certificats gratuitement. Certbot automatise l’installation et le renouvellement.
+        </p>
+
+        <div class="callout info with-avatar">
+          <img class="dcode-avatar" src="../../../assets/img/d_code2.0_idea.jpg" alt="D.Code - idée" loading="lazy">
+          <div class="callout-content">
+            <h4>Pré-requis</h4>
+            <p>DNS correct + ports 80/443 accessibles depuis Internet (en local/VM, ça dépend du réseau).</p>
+          </div>
+        </div>
+
+        <pre><code>sudo apt update
+sudo apt install certbot python3-certbot-apache -y
+sudo certbot --apache</code></pre>
+
+        <ul class="list">
+          <li>Voir les certificats : <code>sudo certbot certificates</code></li>
+          <li>Test renouvellement : <code>sudo certbot renew --dry-run</code></li>
+        </ul>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="lvl2c">
+          Niveau 2C OK
+        </label>
+      </div>
+
+      <!-- Niveau 2D : mini-débrief conceptuel -->
+      <div class="card">
+        <h3>D) Débrief : comment tu expliques ton TP en 30 secondes</h3>
+
+        <p style="color:#333;">
+          Si tu passes un oral ou une mise en situation, l’objectif est de montrer que tu sais ce que tu fais.
+          Exemple de pitch simple :
+        </p>
+
+        <pre><code>1) J'installe Apache et je vérifie le service (systemctl/status).
+2) Je teste l'accès HTTP (curl) et je vérifie les ports (ss).
+3) Je configure un VirtualHost (sites-available), je l'active (a2ensite),
+   je valide la config (apachectl configtest) puis je reload.
+4) En cas de souci, je lis les logs (error.log/access.log + journalctl).</code></pre>
+
+        <label style="display:flex; align-items:center; gap:10px; font-weight:900;">
+          <input type="checkbox" class="progress-check" data-step="lvl2d">
+          Niveau 2D OK
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SECTION QUIZ
+       ========================================================= -->
+  <section class="alt" id="quiz">
+    <div class="container">
+      <h2 class="section-title">Quiz de validation</h2>
+      <p class="section-lead">
+        15 questions. Correction affichée. Tu peux refaire le quiz pour progresser (bouton “Refaire”).
+      </p>
+
+      <div class="quiz-header" style="display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <img src="../../../assets/img/d_code2.0_thinking.jpg" alt="D.Code - quiz" style="width:70px; border-radius:14px; outline:2px solid var(--pink-fuchsia);" loading="lazy">
+        <div>
+          <h3 style="margin:0;">🎓 Validation — Administration Web</h3>
+          <p style="margin:6px 0 0; opacity:0.95;">Réponds puis clique “Valider mes réponses”.</p>
+        </div>
+      </div>
+
+      <div id="score-display"></div>
+
+      <form id="quiz-form">
+        <div id="questions-container"></div>
+
+        <button type="button" class="btn-primary"
+                style="width:100%; padding: 14px; font-size: 1.1rem; margin-top: 12px;"
+                id="validateBtn">
+          Valider mes réponses
+        </button>
+
+        <button type="button" class="btn-secondary"
+                style="width:100%; padding: 14px; font-size: 1.05rem; margin-top: 10px; display:none;"
+                id="retryBtn">
+          Refaire le quiz (réinitialiser)
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer>
+    <div class="footer-left">
+      <div class="footer-links">
+        <a href="../../../apropos.html">À propos</a>
+        <a href="../../../conditions.html">Conditions d’utilisation</a>
+      </div>
+    </div>
+
+    <div class="footer-center">
+      <div class="footer-copy">© 2026 DydyITServices - Formation Informatique</div>
+    </div>
+
+    <div class="footer-right footer-logo">
+      <img src="../../../assets/img/logo-dydyitservices_full.png" alt="Logo DydyITServices">
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       SCRIPT : progression + quiz
+       ========================================================= -->
+  <script>
+    /* =========================================================
+       (A) PROGRESSION (localStorage)
+       ---------------------------------------------------------
+       - But : enregistrer la progression sur l'appareil de l'élève
+       - Avantage : aucune base de données nécessaire (simple, efficace)
+       - Limite : si l'élève change de PC/navigateur, la progression ne suit pas
+       ========================================================= */
+    const COURSE_KEY = "course_serveur_web_progress_v6";
+
+    function loadProgress() {
+      try { return JSON.parse(localStorage.getItem(COURSE_KEY) || "{}"); }
+      catch { return {}; }
+    }
+
+    function saveProgress(state) {
+      localStorage.setItem(COURSE_KEY, JSON.stringify(state));
+    }
+
+    function updateProgressUI() {
+      const checks = Array.from(document.querySelectorAll(".progress-check"));
+      const state = loadProgress();
+
+      checks.forEach(chk => {
+        const step = chk.dataset.step;
+        chk.checked = !!state[step];
+      });
+
+      const total = checks.length || 1;
+      const done = checks.filter(c => c.checked).length;
+      const pct = Math.round((done / total) * 100);
+
+      document.getElementById("progressText").textContent = pct + "%";
+      document.getElementById("progressFill").style.width = pct + "%";
+    }
+
+    function bindProgressEvents() {
+      document.querySelectorAll(".progress-check").forEach(chk => {
+        chk.addEventListener("change", () => {
+          const state = loadProgress();
+          state[chk.dataset.step] = chk.checked;
+          saveProgress(state);
+          updateProgressUI();
+        });
+      });
+
+      document.getElementById("resetProgressBtn").addEventListener("click", () => {
+        localStorage.removeItem(COURSE_KEY);
+        updateProgressUI();
+      });
+    }
+
+    /* =========================================================
+       (B) QUIZ (refaisable)
+       ---------------------------------------------------------
+       - Valider : bloque les réponses (mode examen)
+       - Refaire : reconstruit le quiz et réactive les inputs
+       ========================================================= */
+    const quizData = [
+      { question: "1. Quel code HTTP indique que la requête a réussi ?", options: ["200 OK", "301 Moved", "404 Not Found", "500 Error"], answer: 0, explanation: "Le code 200 est le standard pour une requête traitée avec succès." },
+      { question: "2. Quelle méthode HTTP est utilisée pour demander une ressource (lire une page) ?", options: ["POST", "GET", "PUT", "DELETE"], answer: 1, explanation: "GET est utilisé pour récupérer des données. POST est pour envoyer des données." },
+      { question: "3. Dans un serveur DNS, quel enregistrement pointe vers une adresse IPv4 ?", options: ["AAAA", "CNAME", "A", "MX"], answer: 2, explanation: "L'enregistrement A associe un nom de domaine à une IPv4. AAAA est pour IPv6." },
+      { question: "4. Quelle est la force principale de Nginx par rapport à Apache ?", options: ["Les fichiers .htaccess", "Gestion asynchrone des connexions fortes", "Sa date de création plus ancienne", "L'intégration native de PHP"], answer: 1, explanation: "Nginx est orienté événements (asynchrone), idéal sous fortes charges." },
+      { question: "5. Quelle commande permet de recharger la configuration sans couper les connexions ?", options: ["systemctl restart apache2", "systemctl stop apache2", "systemctl start apache2", "systemctl reload apache2"], answer: 3, explanation: "Reload recharge la config à chaud. Restart coupe puis redémarre." },
+      { question: "6. Dans quel dossier se trouvent les configurations des sites actifs sur Debian/Ubuntu ?", options: ["/etc/apache2/sites-available", "/etc/apache2/sites-enabled", "/var/www/html", "/etc/apache2/mods-enabled"], answer: 1, explanation: "sites-enabled contient les sites activés (souvent liens symboliques)." },
+      { question: "7. Quelle directive Apache définit le dossier racine contenant les fichiers du site ?", options: ["ServerRoot", "DirectoryIndex", "DocumentRoot", "UserDir"], answer: 2, explanation: "DocumentRoot indique le chemin physique des fichiers du site." },
+      { question: "8. Quel est le port standard pour le protocole HTTPS ?", options: ["80", "21", "22", "443"], answer: 3, explanation: "80 = HTTP, 443 = HTTPS." },
+      { question: "9. Quelle permission (chmod) est recommandée pour un fichier HTML standard ?", options: ["777", "644", "755", "600"], answer: 1, explanation: "644 = lecture pour tous, écriture uniquement pour le propriétaire." },
+      { question: "10. Sous quel utilisateur le service Apache tourne-t-il généralement sur Ubuntu ?", options: ["root", "admin", "www-data", "apache-user"], answer: 2, explanation: "www-data est l'utilisateur standard sur Debian/Ubuntu." },
+      { question: "11. Quel outil est couramment utilisé pour générer des certificats SSL gratuits (Let's Encrypt) ?", options: ["OpenSSL", "Certbot", "KeyGen", "SecureShell"], answer: 1, explanation: "Certbot automatise l'obtention de certificats Let's Encrypt." },
+      { question: "12. Quel fichier de log consulter en priorité si votre site affiche une 'Erreur 500' ?", options: ["access.log", "history.log", "error.log", "syslog"], answer: 2, explanation: "error.log contient les détails techniques des erreurs serveur." },
+      { question: "13. Quelle commande permet de suivre les logs en temps réel dans le terminal ?", options: ["cat", "less", "grep", "tail -f"], answer: 3, explanation: "tail -f suit le fichier en direct." },
+      { question: "14. Quel est le rôle principal d'un Reverse Proxy ?", options: ["Héberger la base de données", "Recevoir les requêtes et les transmettre aux serveurs internes", "Générer du code PHP", "Bloquer les emails"], answer: 1, explanation: "Un reverse proxy sert d'intermédiaire et peut gérer SSL/cache/sécurité." },
+      { question: "15. Qu'est-ce que le Load Balancing ?", options: ["Répartir le trafic sur plusieurs serveurs", "Équilibrer les couleurs du site", "Compresser les images", "Sauvegarder les données"], answer: 0, explanation: "Répartition de charge pour performance et haute disponibilité." }
+    ];
+
+    function buildQuiz() {
+      const container = document.getElementById("questions-container");
+      container.innerHTML = "";
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.id = `card-${index}`;
+
+        const opts = q.options.map((opt, optIndex) => `
+          <label>
+            <input type="radio" name="q${index}" value="${optIndex}">
+            ${opt}
+          </label>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="question-title">${q.question}</div>
+          <div class="options">${opts}</div>
+          <div class="feedback" id="feedback-${index}">
+            <strong>Réponse :</strong> ${q.options[q.answer]}<br>
+            <em>${q.explanation}</em>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function submitExam() {
+      let score = 0;
+
+      quizData.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const card = document.getElementById(`card-${index}`);
+
+        card.classList.remove("correct", "incorrect");
+
+        if (!selected) {
+          card.classList.add("incorrect");
+        } else {
+          const val = parseInt(selected.value, 10);
+          if (val === q.answer) {
+            score++;
+            card.classList.add("correct");
+          } else {
+            card.classList.add("incorrect");
+          }
+        }
+
+        // Mode examen : on verrouille après validation
+        document.querySelectorAll(`input[name="q${index}"]`).forEach(inp => inp.disabled = true);
+      });
+
+      const display = document.getElementById("score-display");
+      display.style.display = "block";
+
+      // Couleur selon score
+      let bg = "#c0392b";
+      if (score >= 12) bg = "#27ae60";
+      else if (score >= 8) bg = "#f39c12";
+
+      display.style.backgroundColor = bg;
+      display.textContent = `SCORE FINAL : ${score} / ${quizData.length}`;
+
+      // On marque le quiz comme fait dans la progression
+      const state = loadProgress();
+      state.quiz = true;
+      saveProgress(state);
+      updateProgressUI();
+
+      // Boutons
+      document.getElementById("validateBtn").style.display = "none";
+      document.getElementById("retryBtn").style.display = "inline-block";
+
+      display.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function resetQuiz() {
+      buildQuiz(); // reconstruit le quiz => inputs réactivés
+
+      document.getElementById("score-display").style.display = "none";
+      document.getElementById("validateBtn").style.display = "inline-block";
+      document.getElementById("retryBtn").style.display = "none";
+
+      // Retirer le statut "quiz" dans la progression
+      const state = loadProgress();
+      delete state.quiz;
+      saveProgress(state);
+      updateProgressUI();
+
+      document.getElementById("quiz").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      bindProgressEvents();
+      updateProgressUI();
+      buildQuiz();
+
+      document.getElementById("validateBtn").addEventListener("click", submitExam);
+      document.getElementById("retryBtn").addEventListener("click", resetQuiz);
+    });
+  </script>
+</body>
+</html>
